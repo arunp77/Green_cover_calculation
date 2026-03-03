@@ -1,0 +1,74 @@
+# ============================================================
+# Green Cover Calculator — Analysis Configuration
+# ============================================================
+# Edit this file to point at your real satellite data.
+# Run:  python main.py
+#       python main.py --config path/to/other_config.yaml
+# ============================================================
+
+# ── Output settings ───────────────────────────────────────────
+output:
+  directory: "output"
+  save_reports: true
+  save_visualizations: true        # basic charts (visualization.py)
+  save_scientific_charts: true     # advanced charts (scientific_visualization.py)
+  scientific_subdirectory: "scientific"   # subfolder inside output/
+  dpi: 300
+
+# ── Analysis parameters ───────────────────────────────────────
+analysis:
+  ndvi_threshold: 0.4       # NDVI >= this → vegetated pixel
+  savi_L: 0.5               # Soil brightness factor: 1.0=bare, 0.5=mixed, 0.25=dense
+  change_gain_threshold:  0.10   # ΔNDVI >= this → vegetation gain
+  change_loss_threshold: -0.10   # ΔNDVI <= this → vegetation loss
+  spatial_cv_window: 15     # pixel window for local coefficient-of-variation map
+
+# ── Scenes to analyse ─────────────────────────────────────────
+# Add one entry per scene. Scenes of the SAME location with different
+# dates are automatically grouped for temporal / change-detection charts.
+#
+# sensor   : "landsat8", "landsat9", or "sentinel2"
+# location : human-readable label — scenes with the SAME location string
+#            are treated as a time-series
+# date     : YYYY-MM-DD
+# bands    : paths relative to project root (or absolute)
+#   red    : required
+#   nir    : required
+#   blue   : optional (enables EVI and RGB overlay)
+#   swir   : optional (enables NDWI — Landsat B6, Sentinel B11)
+# ──────────────────────────────────────────────────────────────
+
+scenes:
+
+  # # ── Landsat 8 — time-series example (same location, two dates) ─
+  # - sensor: landsat8
+  #   location: "Delhi NCR"
+  #   date: "2023-11-15"
+  #   bands:
+  #     red:  "data/landsat/LC08_L2SP_146040_20231115_B4.TIF"
+  #     nir:  "data/landsat/LC08_L2SP_146040_20231115_B5.TIF"
+  #     blue: "data/landsat/LC08_L2SP_146040_20231115_B2.TIF"
+  #     swir: "data/landsat/LC08_L2SP_146040_20231115_B6.TIF"   # for NDWI
+
+  # - sensor: landsat8
+  #   location: "Delhi NCR"
+  #   date: "2024-03-15"
+  #   bands:
+  #     red:  "data/landsat/LC08_L2SP_146040_20240315_B4.TIF"
+  #     nir:  "data/landsat/LC08_L2SP_146040_20240315_B5.TIF"
+  #     blue: "data/landsat/LC08_L2SP_146040_20240315_B2.TIF"
+  #     swir: "data/landsat/LC08_L2SP_146040_20240315_B6.TIF"
+
+  # ── Sentinel-2 example ─────────────────────────────────────────
+  - sensor: sentinel2
+    location: "Uttar Pradesh - Gorakhpur"
+    date: "2026-02-23"
+    bands:
+      red:  "data/sentinel2/T44RQQ_20260223T045811_B04_10m.jp2"
+      nir:  "data/sentinel2/T44RQQ_20260223T045811_B08_10m.jp2"
+      blue: "data/sentinel2/T44RQQ_20260223T045811_B02_10m.jp2"
+      swir: "data/sentinel2/T44RKS_20240115_B11_10m.jp2"
+            #  ↑ Sentinel B11 is 20m — will be resampled automatically
+            #   if shapes differ (requires rasterio)
+            #   If you want to pre-resample manually, use gdalwarp:
+            #   gdalwarp -tr 10 10 -r bilinear T44RQQ_20260223T045811_B11_20m.jp2 T44RKS_20240115_B11_10m.jp2

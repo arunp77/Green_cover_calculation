@@ -1,0 +1,13 @@
+Green Cover Analysis Report
+Location: Test Region
+==================================================
+
+Green Cover: 11.26%
+
+NDVI Statistics:
+  mean: 0.1448
+  std: 0.1911
+  min: -0.3568
+  max: 0.7896
+  median: 0.1238
+  valid_pixels: 22500

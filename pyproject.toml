@@ -1,0 +1,4 @@
+[project]
+name = "green_cover"
+version = "1.0.0"
+dependencies = ["numpy", "matplotlib"]
